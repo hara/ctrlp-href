@@ -59,6 +59,11 @@ call add(g:ctrlp_ext_vars, {
 " Return: a Vim's List
 "
 function! ctrlp#href#init(crbufnr)
+  let buf_filetype = getbufvar(a:crbufnr, '&filetype')
+  if index(s:filetypes, buf_filetype) == -1
+    return []
+  endif
+
   let input =
   \ filter(map(getbufline(a:crbufnr, 1, '$'),
   \            'matchstr(v:val, ''href="\zs[^"]\+\ze"'')'),
@@ -90,9 +95,18 @@ endfunction
 function! ctrlp#href#exit()
 endfunction
 
+let [s:prefix, s:opts] = ['g:ctrlp_href_', {
+\     'filetypes': ['s:user_filetypes', []]
+\ }]
+
+let s:filetypes = [ 'xml', 'html', 'xhtml' ]
 
 " (optional) Set or check for user options specific to this extension
 function! ctrlp#href#opts()
+  for [key, value] in items(s:opts)
+    let {value[0]} = exists(s:prefix.key) ? {s:prefix.key} : value[1]
+  endfor
+  call extend(s:filetypes, s:user_filetypes)
 endfunction
 
 
