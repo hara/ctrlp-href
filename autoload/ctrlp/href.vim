@@ -64,11 +64,10 @@ function! ctrlp#href#init(crbufnr)
     return []
   endif
 
-  let input =
-  \ filter(map(getbufline(a:crbufnr, 1, '$'),
-  \            'matchstr(v:val, ''href="\zs[^"]\+\ze"'')'),
-  \        'v:val != ""')
-  return input
+  let lines = getbufline(a:crbufnr, 1, '$')
+  call filter(map(lines, 'matchstr(v:val, ''href="\zs[^"]\+\ze"'')'),
+  \           'v:val != ""')
+  return lines
 endfunction
 
 
